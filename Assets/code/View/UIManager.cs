@@ -13,6 +13,7 @@ public class UIManager : MonoBehaviour
 
     public UIElement endButton;
 
+    [Space(10)]
     public GameObject mainUI;
 
     public Text handGestureDebugText;
@@ -28,6 +29,21 @@ public class UIManager : MonoBehaviour
     public Sprite gripImage;
 
     public Sprite noneImage;
+
+
+    [Space(10)]
+
+    public UIElement testBtn;
+
+    public GameObject testObject;
+
+    public UIElement settingsBtn;
+
+
+
+    [Space(10)]
+
+    public GameObject settingUI;
 
     private void Awake()
     {
@@ -69,14 +85,56 @@ public class UIManager : MonoBehaviour
 
             leftHanddDebugImage.gameObject.AddComponent<UpdateListener>().SetUpdateHandler(() =>
             {
-                
+
                 leftHanddDebugImage.GetComponent<Image>().sprite = getHandSprite(GesEventInput.Instance.GetGestureType(HandType.LeftHand));
             });
             rightHanddDebugImage.gameObject.AddComponent<UpdateListener>().SetUpdateHandler(() =>
             {
                 rightHanddDebugImage.GetComponent<Image>().sprite = getHandSprite(GesEventInput.Instance.GetGestureType(HandType.RightHand));
             });
+
+
+            testBtn.SetOnClickHandler(() =>
+            {
+                GamePhaseManager.getInstance().appendPhase(new ExitMainScenePhase());
+                GamePhaseManager.getInstance().appendPhase(new EnterTestingScenePhase());
+
+            });
+
+            settingsBtn.SetOnClickHandler(() =>
+            {
+                GamePhaseManager.getInstance().appendPhase(new ExitMainScenePhase());
+                GamePhaseManager.getInstance().appendPhase(new EnterSettingUIPhase());
+            });
         });
+        new GamePhaseListener(typeof(ExitMainScenePhase), TriggerTime.START, () =>
+        {
+            mainUI.SetActive(false);
+        });
+
+        new GamePhaseListener(typeof(EnterTestingScenePhase), TriggerTime.END, () =>
+        {
+            testObject.SetActive(true);
+        });
+
+        new GamePhaseListener(typeof(ExitTestingScenePhase), TriggerTime.START, () =>
+        {
+            testObject.SetActive(false);
+        });
+
+
+        new GamePhaseListener(typeof(EnterSettingUIPhase), TriggerTime.END, () =>
+        {
+            settingUI.SetActive(true);
+            
+        });
+
+        new GamePhaseListener(typeof(ExitSettingScenePhase), TriggerTime.START, () =>
+        {
+            settingUI.SetActive(false);
+        });
+
+
     }
 
     private Sprite getHandSprite(GestureType gestureType)
@@ -97,7 +155,7 @@ public class UIManager : MonoBehaviour
         {
             return pinchImage;
         }
-        
+
 
         return noneImage;
     }
