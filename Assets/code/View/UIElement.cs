@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -63,9 +64,22 @@ public class UIElement : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         GetComponent<Image>().color = disabledColor * colorMultiplier;
     }
 
-    public virtual void OnClick(){
+    private Action onClickHandler;
 
+    public void SetOnClickHandler(Action onClick)
+    {
+        onClickHandler = onClick;
     }
 
+    [ContextMenu("OnClick")]
+    public virtual void OnClick()
+    {
+        // 检查是否有设置点击处理程序
+        if (onClickHandler == null) return;
+
+        onClickHandler.Invoke();
+
+    }
+    
 
 }

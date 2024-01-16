@@ -5,12 +5,11 @@ using System;
 using System.Threading;
 // using UnityEngine.SceneManagement;
 
-public class GameEndPhase : Phase
+public class EnterMainScenePhase : Phase
 {
     public override void Exec()
     {
-       base.Exec();
-       Application.Quit();
+      
 
     }
 }

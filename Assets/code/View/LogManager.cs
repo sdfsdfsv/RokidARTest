@@ -7,7 +7,7 @@ using System;
 public class LogManager : MonoBehaviour {
     
     private void Awake() {
-         new GamePhaseListener(typeof(GameStartPhase), TriggerTime.START, () => {
+        new GamePhaseListener(typeof(GameStartPhase), TriggerTime.START, () => {
             Debug.Log("game started");
         });
         new GamePhaseListener(typeof(GameEndPhase), TriggerTime.START, () => {

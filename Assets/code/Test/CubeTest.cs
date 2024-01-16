@@ -1,6 +1,8 @@
 using Rokid.UXR.Interaction;
 using UnityEngine;
 
+
+// test 3Dof radial interaction
 public class CubeTest : MonoBehaviour
 {
     private MeshRenderer meshRenderer;

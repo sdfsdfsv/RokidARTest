@@ -5,14 +5,10 @@ using System;
 using System.Threading;
 
 
-public class GamePhaseManager
+public class GamePhaseManager : MonoBehaviour
 {
 
     private static GamePhaseManager instance;
-    private Thread gamePhaseProccessingThread;
-
-
-
     private List<Phase> phases = new List<Phase>();
     private Mutex phasesMutex = new Mutex();
     private Semaphore phasesSemaphore = new Semaphore(0, 1000);
@@ -22,33 +18,33 @@ public class GamePhaseManager
     {
         if (instance == null)
         {
-            instance = new GamePhaseManager();
+            instance = new GameObject("GamePhaseManager").AddComponent<GamePhaseManager>();   
         }
         return instance;
     }
 
     public GamePhaseManager()
     {
-        gamePhaseProccessingThread = new Thread(procGamePhases);
-        gamePhaseProccessingThread.Start();
-       
-
+        
     }
 
-    public void StartGame(){
-        pushPhase(new GameStartPhase());
+    public void StartGame()
+    {
+        StartCoroutine(procGamePhases());
+        
+        appendPhase(new GameStartPhase());
     }
 
-    private void procGamePhases()
+    IEnumerator procGamePhases()
     {
         while (true)
         {
 
-            phasesSemaphore.WaitOne();
-            phasesMutex.WaitOne();
-            execPhase(phases[currentPhaseInd]);
-            phasesMutex.ReleaseMutex();
-            currentPhaseInd++;
+            if(currentPhaseInd<phases.Count){
+                execPhase(phases[currentPhaseInd]);
+                currentPhaseInd++;
+            }
+            yield return new WaitForSeconds(0.01f);
 
         }
     }
@@ -66,20 +62,16 @@ public class GamePhaseManager
 
     public void appendPhase(Phase phase)
     {
-        phasesMutex.WaitOne();
         phases.Add(phase);
-        phasesMutex.ReleaseMutex();
-        phasesSemaphore.Release();
     }
 
     public Phase getCurrentPhase()
     {
-        phasesMutex.WaitOne();
         if (currentPhaseInd >= phases.Count) { phasesMutex.ReleaseMutex(); return null; }
-        phasesMutex.ReleaseMutex();
         return phases[currentPhaseInd];
     }
-    public void EndGame(){
+    public void EndGame()
+    {
         pushPhase(new GameEndPhase());
     }
 
