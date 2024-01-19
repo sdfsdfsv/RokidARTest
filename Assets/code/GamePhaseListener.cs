@@ -9,6 +9,8 @@ public class GamePhaseListener  {
 
     private static List<GamePhaseListener> gamePhaseListeners = new List<GamePhaseListener>();
 
+    private Phase triggeredPhase;
+
     // the type of phase that triggers the game event
     private Type triggeredPhaseType;
     // the time of phase that causes the game event
@@ -29,6 +31,10 @@ public class GamePhaseListener  {
         gamePhaseListeners.Add(this);
     }
 
+    public Phase getTriggeredPhase(){
+        return triggeredPhase;
+    }
+
     public Type getTriggeredPhaseType(){
         return triggeredPhaseType;
     }
@@ -40,7 +46,13 @@ public class GamePhaseListener  {
     public Action getAction(){
         return action;
     }
+    public void setTriggeredPhase(Phase triggeredPhase){
+        this.triggeredPhase = triggeredPhase;
+    }
 
+    public void setAction(Action action){
+        this.action = action;
+    }
 
    
 }

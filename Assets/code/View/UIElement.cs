@@ -3,10 +3,11 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
+[Serializable]
 public class UIElement : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler
 {
-    public bool interactable = true;
-    public Sprite targetGraphic;
+    private bool interactable = true;
+    private Sprite targetGraphic;
     public Color normalColor = Color.white;
     public Color highlightColor = new Color(.93f, .93f, .93f);
     public Color pressedColor = Color.grey * 1.2f;
@@ -17,14 +18,7 @@ public class UIElement : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     private void Awake()
     {
 
-        if (GetComponent<Image>() == null)
-        {
-            gameObject.AddComponent<Image>();
-        }
-
-        if (targetGraphic == null) return;
-        // 设置图片
-        GetComponent<Image>().sprite = targetGraphic;
+       setTargetGraphic(targetGraphic);
 
     }
 
@@ -78,6 +72,24 @@ public class UIElement : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         if (onClickHandler == null) return;
 
         onClickHandler.Invoke();
+
+    }
+
+
+    public void setInteractable(bool interactable){
+        this.interactable = interactable;
+    }
+    public void setTargetGraphic(Sprite targetGraphic){
+        this.targetGraphic = targetGraphic;
+
+        if (GetComponent<Image>() == null)
+        {
+            gameObject.AddComponent<Image>();
+        }
+
+        if (targetGraphic == null) return;
+        // 设置图片
+        GetComponent<Image>().sprite = targetGraphic;
 
     }
     

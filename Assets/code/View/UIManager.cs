@@ -2,8 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.IO;
 using UnityEngine.UI;
 using Rokid.UXR.Interaction;
+using Aspose.Slides;
 
 
 public class UIManager : MonoBehaviour
@@ -30,20 +32,22 @@ public class UIManager : MonoBehaviour
 
     public Sprite noneImage;
 
+    public UIElement importBtn;
+    public UIElement testBtn;
+    public UIElement settingsBtn;
+    public UIElement playBtn;
+
+    public GridLayoutGroup pptGridLayoutGroup;
 
     [Space(10)]
 
-    public UIElement testBtn;
-
-    public GameObject testObject;
-
-    public UIElement settingsBtn;
-
-
+    public GameObject testingUI;
+    public UIElement testingExitBtn;
 
     [Space(10)]
 
     public GameObject settingUI;
+    public UIElement settingExitBtn;
 
     private void Awake()
     {
@@ -92,7 +96,12 @@ public class UIManager : MonoBehaviour
             {
                 rightHanddDebugImage.GetComponent<Image>().sprite = getHandSprite(GesEventInput.Instance.GetGestureType(HandType.RightHand));
             });
+            ImportTest importTest = new ImportTest();
 
+            importBtn.SetOnClickHandler(() =>
+            {
+                GamePhaseManager.getInstance().appendPhase(new ImportPPTPhase());
+            });
 
             testBtn.SetOnClickHandler(() =>
             {
@@ -107,26 +116,58 @@ public class UIManager : MonoBehaviour
                 GamePhaseManager.getInstance().appendPhase(new EnterSettingUIPhase());
             });
         });
+
         new GamePhaseListener(typeof(ExitMainScenePhase), TriggerTime.START, () =>
         {
             mainUI.SetActive(false);
         });
 
+
+        new GamePhaseListener(typeof(ImportPPTPhase), TriggerTime.START, () =>
+        {
+
+        });
+        new GamePhaseListener(typeof(ImportPPTPhase), TriggerTime.END, () =>
+        {
+
+            GameObject pptCover = new GameObject("ppt");
+            Presentation pre = ((ImportPPTPhase)Phase.getCurrentPhase()).getPresentation();
+            Sprite cover = PPTCtrl.getPPTPage(pre, 0);
+            String pptName = Path.GetFileName(((ImportPPTPhase)Phase.getCurrentPhase()).getPPTPath());
+            pptCover.name = pptName;
+            pptCover.AddComponent<UIElement>().setTargetGraphic(cover);
+            pptCover.transform.SetParent(pptGridLayoutGroup.transform);
+
+        });
+
+
         new GamePhaseListener(typeof(EnterTestingScenePhase), TriggerTime.END, () =>
         {
-            testObject.SetActive(true);
+            testingUI.SetActive(true);
+
+            testingExitBtn.SetOnClickHandler(() =>
+            {
+                GamePhaseManager.getInstance().appendPhase(new ExitTestingScenePhase());
+                GamePhaseManager.getInstance().appendPhase(new EnterMainScenePhase());
+            });
         });
 
         new GamePhaseListener(typeof(ExitTestingScenePhase), TriggerTime.START, () =>
         {
-            testObject.SetActive(false);
+            testingUI.SetActive(false);
+
         });
 
 
         new GamePhaseListener(typeof(EnterSettingUIPhase), TriggerTime.END, () =>
         {
             settingUI.SetActive(true);
-            
+            settingExitBtn.SetOnClickHandler(() =>
+            {
+                GamePhaseManager.getInstance().appendPhase(new ExitSettingScenePhase());
+                GamePhaseManager.getInstance().appendPhase(new EnterMainScenePhase());
+            });
+
         });
 
         new GamePhaseListener(typeof(ExitSettingScenePhase), TriggerTime.START, () =>
@@ -136,6 +177,9 @@ public class UIManager : MonoBehaviour
 
 
     }
+
+
+
 
     private Sprite getHandSprite(GestureType gestureType)
     {
