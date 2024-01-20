@@ -7,9 +7,5 @@ using System.Threading;
 
 public class EnterSettingUIPhase : Phase
 {
-    public override void Exec()
-    {
-      
-
-    }
+   
 }

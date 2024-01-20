@@ -6,38 +6,23 @@ using System.Threading;
 using Aspose.Slides;
 // using UnityEngine.SceneManagement;
 
-public class ImportPPTPhase : Phase
+public class EnterPlayingScenePhase : Phase
 {
-    private string pptPath;
-
     private Presentation presentation;
 
-    public override void Exec()
+    public EnterPlayingScenePhase(Presentation presentation)
     {
-        base.Exec();
-        pptPath = ImportTest.ImportFile();
-        if (pptPath == null)
-            return;
-
-        presentation = new Presentation(pptPath);
+        this.presentation = presentation;
     }
 
-    public string getPPTPath()
-    {
-        return pptPath;
-    }
     public Presentation getPresentation()
     {
         return presentation;
     }
-
-    public void setPPTPath(string pptPath)
-    {
-        this.pptPath = pptPath;
-    }
-
+    
     public void setPresentation(Presentation presentation)
     {
         this.presentation = presentation;
     }
+
 }

@@ -7,9 +7,5 @@ using System.Threading;
 
 public class ExitMainScenePhase : Phase
 {
-    public override void Exec()
-    {
-      
-
-    }
+  
 }

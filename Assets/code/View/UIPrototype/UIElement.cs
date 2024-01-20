@@ -18,7 +18,7 @@ public class UIElement : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     private void Awake()
     {
 
-       setTargetGraphic(targetGraphic);
+        setTargetGraphic(targetGraphic);
 
     }
 
@@ -76,10 +76,17 @@ public class UIElement : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     }
 
 
-    public void setInteractable(bool interactable){
+    public void setInteractable(bool interactable)
+    {
         this.interactable = interactable;
+        if (interactable)
+            GetComponent<Image>().color = normalColor * colorMultiplier;
+        else
+            GetComponent<Image>().color = disabledColor * colorMultiplier;
+
     }
-    public void setTargetGraphic(Sprite targetGraphic){
+    public void setTargetGraphic(Sprite targetGraphic)
+    {
         this.targetGraphic = targetGraphic;
 
         if (GetComponent<Image>() == null)
@@ -92,6 +99,6 @@ public class UIElement : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         GetComponent<Image>().sprite = targetGraphic;
 
     }
-    
+
 
 }

@@ -6,6 +6,7 @@ using System.IO;
 using UnityEngine.UI;
 using Rokid.UXR.Interaction;
 using Aspose.Slides;
+using TMPro;
 
 
 public class UIManager : MonoBehaviour
@@ -37,7 +38,13 @@ public class UIManager : MonoBehaviour
     public UIElement settingsBtn;
     public UIElement playBtn;
 
+    public GameObject PPTCoverPrefab;
+
     public GridLayoutGroup pptGridLayoutGroup;
+
+    public Dictionary<Presentation, GameObject> presentationViewDict = new Dictionary<Presentation, GameObject>();
+
+    private Presentation selectedPresentation;
 
     [Space(10)]
 
@@ -48,6 +55,17 @@ public class UIManager : MonoBehaviour
 
     public GameObject settingUI;
     public UIElement settingExitBtn;
+
+    [Space(10)]
+
+    public GameObject playingUI;
+
+    public Image PPTContent;
+
+    public UIElement prevPPTPageBtn;
+
+    public UIElement nextPPTPageBtn;
+    public UIElement playingExitBtn;
 
     private void Awake()
     {
@@ -115,6 +133,16 @@ public class UIManager : MonoBehaviour
                 GamePhaseManager.getInstance().appendPhase(new ExitMainScenePhase());
                 GamePhaseManager.getInstance().appendPhase(new EnterSettingUIPhase());
             });
+
+            if (selectedPresentation == null)
+            {
+                playBtn.setInteractable(false);
+            }
+            playBtn.SetOnClickHandler(() =>
+            {
+                GamePhaseManager.getInstance().appendPhase(new ExitMainScenePhase());
+                GamePhaseManager.getInstance().appendPhase(new EnterPlayingScenePhase(selectedPresentation));
+            });
         });
 
         new GamePhaseListener(typeof(ExitMainScenePhase), TriggerTime.START, () =>
@@ -123,23 +151,35 @@ public class UIManager : MonoBehaviour
         });
 
 
-        new GamePhaseListener(typeof(ImportPPTPhase), TriggerTime.START, () =>
-        {
-
-        });
         new GamePhaseListener(typeof(ImportPPTPhase), TriggerTime.END, () =>
         {
 
-            GameObject pptCover = new GameObject("ppt");
+            GameObject pptCover = Instantiate(PPTCoverPrefab, pptGridLayoutGroup.transform, false);
             Presentation pre = ((ImportPPTPhase)Phase.getCurrentPhase()).getPresentation();
+            if (pre == null)
+                return;
             Sprite cover = PPTCtrl.getPPTPage(pre, 0);
             String pptName = Path.GetFileName(((ImportPPTPhase)Phase.getCurrentPhase()).getPPTPath());
             pptCover.name = pptName;
             pptCover.AddComponent<UIElement>().setTargetGraphic(cover);
-            pptCover.transform.SetParent(pptGridLayoutGroup.transform);
+            presentationViewDict.Add(pre, pptCover);
+
+            pptCover.GetComponent<UIElement>().SetOnClickHandler(() =>
+            {
+                GamePhaseManager.getInstance().appendPhase(new SelectPPTPhase(pre));
+            });
 
         });
-
+        new GamePhaseListener(typeof(SelectPPTPhase), TriggerTime.END, () =>
+        {
+            if (selectedPresentation != null && presentationViewDict.ContainsKey(selectedPresentation))
+            {
+                presentationViewDict[selectedPresentation].transform.Find("CheckImage").gameObject.SetActive(false);
+            }
+            selectedPresentation = ((SelectPPTPhase)Phase.getCurrentPhase()).getPresentation(); ;
+            presentationViewDict[selectedPresentation].transform.Find("CheckImage").gameObject.SetActive(true);
+            playBtn.setInteractable(selectedPresentation != null);
+        });
 
         new GamePhaseListener(typeof(EnterTestingScenePhase), TriggerTime.END, () =>
         {
@@ -174,6 +214,36 @@ public class UIManager : MonoBehaviour
         {
             settingUI.SetActive(false);
         });
+
+        new GamePhaseListener(typeof(EnterPlayingScenePhase), TriggerTime.START, () =>
+        {
+            playingUI.SetActive(true);
+            playingExitBtn.SetOnClickHandler(() =>
+            {
+                GamePhaseManager.getInstance().appendPhase(new ExitPlayingScenePhase());
+                GamePhaseManager.getInstance().appendPhase(new EnterMainScenePhase());
+            });
+            int currentPageIndex = 0;
+            PPTContent.sprite = PPTCtrl.getPPTPage(selectedPresentation, currentPageIndex);
+            PPTContent.GetComponent<RectTransform>().sizeDelta = new Vector2(PPTContent.sprite.textureRect.width, PPTContent.sprite.textureRect.height);
+            prevPPTPageBtn.SetOnClickHandler(() =>
+            {
+                currentPageIndex = Math.Max(currentPageIndex - 1, 0);
+                PPTContent.sprite = PPTCtrl.getPPTPage(selectedPresentation, currentPageIndex);
+            });
+            nextPPTPageBtn.SetOnClickHandler(() =>
+            {
+                currentPageIndex = Math.Min(currentPageIndex + 1, selectedPresentation.Slides.Count - 1);
+                PPTContent.sprite = PPTCtrl.getPPTPage(selectedPresentation, currentPageIndex);
+            });
+        });
+
+        new GamePhaseListener(typeof(ExitPlayingScenePhase), TriggerTime.START, () =>
+                {
+                    playingUI.SetActive(false);
+
+                });
+
 
 
     }
