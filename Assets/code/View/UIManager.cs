@@ -67,6 +67,9 @@ public class UIManager : MonoBehaviour
     public UIElement nextPPTPageBtn;
     public UIElement playingExitBtn;
 
+
+
+
     private void Awake()
     {
 
@@ -74,7 +77,6 @@ public class UIManager : MonoBehaviour
         new GamePhaseListener(typeof(GameStartPhase), TriggerTime.START, () =>
         {
             startButton.gameObject.SetActive(true);
-            endButton.gameObject.SetActive(true);
             startButton.SetOnClickHandler(() =>
             {
                 GamePhaseManager.getInstance().appendPhase(new EnterMainScenePhase());
