@@ -11,14 +11,7 @@ public class GameManager : MonoBehaviour {
     private void Start() {
         GamePhaseManager.getInstance().StartGame();
 
-        new GamePhaseListener(typeof(EnterTestingScenePhase), TriggerTime.END, () =>
-        {
-            testObject.SetActive(true);
-        });
-         new GamePhaseListener(typeof(ExitTestingScenePhase), TriggerTime.END, () =>
-        {
-            testObject.SetActive(false);
-        });
+      
 
     }
     

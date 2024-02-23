@@ -43,15 +43,35 @@ Shader "Test"
             float4 _UVRect;
             float4 _Color;
 
+
+
+
             float hash(float2 co){
                 return frac(sin(dot(co ,float2(12.9898, 78.233))) * 43758.5453);
+            }
+
+            float smoothHash(float2 co){
+                
+
+                float2 i = float2(floor(co));
+
+                float2 f = frac(co);
+
+                float2 u = f*f*(3.-2.*f);
+                
+                u*=u;
+
+                return lerp( lerp( hash( i + float2(0,0) ), 
+                            hash( i + float2(1,0) ), u.x),
+                        lerp( hash( i + float2(0,1) ), 
+                            hash( i + float2(1,1) ), u.x), u.y);
+
             }
 
             v2f vert(appdata_t v)
             {
                 v2f o;
                 o.pos = UnityObjectToClipPos(v.vertex);
-                
                 o.uv = v.vertex.xy;
                 return o;
             }
@@ -60,7 +80,6 @@ Shader "Test"
 
             fixed4 frag(v2f i) : COLOR
             {   
-                
                 
 
                 // Normalize the UV coordinates within the specified UVRect
@@ -83,7 +102,7 @@ Shader "Test"
                 
                 float v = 16. * st.x * (1. - st.x) * st.y * (1. - st.y); // vignette
                 col *= 1. - .2 * exp2(-.05 * v);
-                col = clamp(col - hash(uv) * .004, 0., 1.);
+                col = clamp(col - smoothHash(uv) * .004, 0., 1.);
                 return col;
             }
 
