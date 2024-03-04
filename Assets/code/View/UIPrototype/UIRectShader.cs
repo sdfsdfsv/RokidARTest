@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(RectTransform))]
 
 public class UIRectShader : MonoBehaviour
 {

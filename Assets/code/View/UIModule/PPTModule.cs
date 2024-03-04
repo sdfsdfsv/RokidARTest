@@ -31,6 +31,7 @@ public class PPTModule : MonoBehaviour
             {
                 pre.gameObject.SetActive(false);
             }
+            GamePhaseManager.getInstance().appendPhase(new GameStartPhase());
 
         });
 
