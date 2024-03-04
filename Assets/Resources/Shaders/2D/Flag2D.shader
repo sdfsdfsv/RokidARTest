@@ -71,7 +71,8 @@ Shader "Flag2D"
                 float2 ouv = uv;
 
                 // Sample the texture
-                fixed4 col = tex2D(_MainTex, st);
+                fixed4 col = tex2D(_MainTex, st-float2(.4,-0.15));
+               
 
                 float w = sin((uv.x + uv.y - _Time.y * .75 + sin(3 * uv.x + 9 * uv.y) * PI * .3)
                             * PI * .6); // fake waviness factor
@@ -92,7 +93,13 @@ Shader "Flag2D"
                 // col.a *= smoothstep(0,val,1-abs(1-st.y))/val;
                 val = 1 ;
                 col.a *= smoothstep(0.,val,.8-abs(.8-st.x))/val;
-                col *= tex2D(_MainTex, st);
+                
+                col *= tex2D(_MainTex, st-float2(.4,-0.15));
+
+                col *= length(float2(st.x-1.5,1));
+
+                col.a *= min(_Time.y,2)/2;
+                // col *= 
                 return col;
             }
 

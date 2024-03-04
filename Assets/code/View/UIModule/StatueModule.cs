@@ -9,9 +9,7 @@ public class StatueModule : UIFaceCam
     public override void Start()
     {   
         base.Start();
-        MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
-        pos = meshRenderer.bounds.center;
-        
+        pos = transform.position;
     }
    
     Vector3 pos;
@@ -19,11 +17,11 @@ public class StatueModule : UIFaceCam
     public float scale;
 
     // Update is called once per frame
-    public void Update()
+    public override void LateUpdate()
     {   
-        
-        float rotateFactor = Math.Sign(Math.Sin(Time.time*speed))*scale/100;
-        transform.RotateAround(pos, Vector3.up, rotateFactor);
+        base.LateUpdate();
+        float rotateFactor = (float)(Math.Sin(Time.time*speed)*scale);
+        transform.RotateAround(pos, transform.up, rotateFactor);
 
 
     }

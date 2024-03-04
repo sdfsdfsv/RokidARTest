@@ -4,19 +4,20 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class UIFaceCam: MonoBehaviour{
-    
-    Quaternion rotation;
+
     Vector3 screenPos;
-    
     public virtual  void Start() {
         
         screenPos = Camera.main.WorldToScreenPoint(transform.position);
-        rotation = Camera.main.transform.rotation;
+        screenPos.x = Mathf.Max(screenPos.x,20);
+        screenPos.y = Mathf.Max(screenPos.y,20);
     }
-    void LateUpdate() {
+    public virtual void LateUpdate() {
         
-        transform.LookAt(Camera.main.transform);
-        transform.rotation*= rotation;
+        transform.LookAt(
+            transform.position - Camera.main.transform.rotation * Vector3.forward,
+            Camera.main.transform.rotation * Vector3.up
+        );
         transform.position = Camera.main.ScreenToWorldPoint(screenPos);
         
         
