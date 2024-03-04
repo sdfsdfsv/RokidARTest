@@ -8,10 +8,8 @@ Shader "Flag2D"
     }
     SubShader
     {
-        Tags {"Queue"="Geometry"
-        "IgnoreProjector"="True"
+        Tags {
         "RenderType"="Transparent"
-        "PreviewType"="Plane"
         "CanUseSpriteAtlas"="True" }
         // No culling or depth
         Cull Off ZWrite Off ZTest Always
@@ -69,13 +67,13 @@ Shader "Flag2D"
                 uv*=2.;
                 
                 float2 st = ((i.uv - _UVRect.xy)+float2(.5,.5)*(_UVRect.zw - _UVRect.xy)) / min((_UVRect.z - _UVRect.x),(_UVRect.w - _UVRect.y)) ;
-              
+                st.x/=1.5;
                 float2 ouv = uv;
 
                 // Sample the texture
                 fixed4 col = tex2D(_MainTex, st);
 
-                float w = sin((uv.x + uv.y - _Time.y * .75 + sin(1.5 * uv.x + 4.5 * uv.y) * PI * .3)
+                float w = sin((uv.x + uv.y - _Time.y * .75 + sin(3 * uv.x + 9 * uv.y) * PI * .3)
                             * PI * .6); // fake waviness factor
                 
                 uv *= 1. + (.036 - .036 * w*pow(1.3,(1.-st.y)));
@@ -90,6 +88,11 @@ Shader "Flag2D"
                 col.a *= 1.-1.*length(float2(ouv.x,ouv.y));
 
                 col.a = pow(col.a,-.1);
+                float val = 1;
+                // col.a *= smoothstep(0,val,1-abs(1-st.y))/val;
+                val = 1 ;
+                col.a *= smoothstep(0.,val,.8-abs(.8-st.x))/val;
+                col *= tex2D(_MainTex, st);
                 return col;
             }
 

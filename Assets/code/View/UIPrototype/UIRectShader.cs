@@ -16,8 +16,10 @@ public class UIRectShader : MonoBehaviour
         // 动态创建对象时为每个对象创建新的材质实例
         newMaterialInstance = Instantiate(effectMaterial);
 
+        if(gameObject.GetComponent<Image>())
         gameObject.GetComponent<Image>().material = newMaterialInstance;
-
+        if(gameObject.GetComponent<Font>())
+        gameObject.GetComponent<Font>().material = newMaterialInstance;
     }
     Material newMaterialInstance;
     private void Update()
