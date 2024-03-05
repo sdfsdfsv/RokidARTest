@@ -5,7 +5,6 @@ using System;
 using System.IO;
 using UnityEngine.UI;
 using Rokid.UXR.Interaction;
-using Aspose.Slides;
 using TMPro;
 using System.Data.Common;
 

@@ -38,6 +38,7 @@ public class PPTModule : MonoBehaviour
         new GamePhaseListener(typeof(PlayPPTPhase), TriggerTime.START, () =>
         {
             currentPresentation.SetActive(true);
+            
         });
 
         new GamePhaseListener(typeof(HandPinchPhase), TriggerTime.START, () =>

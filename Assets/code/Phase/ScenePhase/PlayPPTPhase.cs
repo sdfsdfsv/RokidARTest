@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Threading;
-using Aspose.Slides;
 // using UnityEngine.SceneManagement;
 
 public class PlayPPTPhase : Phase

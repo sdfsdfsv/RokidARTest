@@ -85,11 +85,11 @@ Shader "Custom/Dissolve" { // 逐像素高光反射
                 float3 tangent = normalize(f.worldTangent);
                 float3 pos = f.worldVertex;
 
-                float distance = distance(pos - tangent);
+                float distance = length(pos - tangent);
 
                 float value = max(distance, _MaxDis);
 
-                if( dis)
+                
                 value = saturate(value);
 
 
