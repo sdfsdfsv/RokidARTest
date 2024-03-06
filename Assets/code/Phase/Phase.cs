@@ -1,8 +1,8 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Threading;
+using System.Collections.Generic;
 
 public class Phase
 {
@@ -30,14 +30,16 @@ public class Phase
     // return the process of this phase from 0 to 1
     private void triggerListeners(TriggerTime triggerTime)
     {
-        GamePhaseListener.getGamePhaseListeners().ForEach(listener =>
-        {
-          
-            if (listener.getTriggeredPhaseType() != this.GetType()) return;
-            if (listener.getTriggeredTime() != triggerTime) return;
+        List<GamePhaseListener> listeners = GamePhaseListener.getGamePhaseListeners();
+        for (int i = listeners.Count - 1; i >= 0; i--)
+{
+            var listener = listeners[i];
+            // Your conditions and invocation.
+            if (listener.getTriggeredPhaseType() != this.GetType()) continue;
+            if (listener.getTriggeredTime() != triggerTime) continue;
             listener.setTriggeredPhase(this);
             listener.getAction().Invoke();
-        });
+        }
     }
 
     public static Phase getCurrentPhase()
